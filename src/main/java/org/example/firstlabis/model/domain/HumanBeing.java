@@ -1,10 +1,10 @@
-package org.example.firstlabis.model;
+package org.example.firstlabis.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.firstlabis.model.enums.Mood;
-import org.example.firstlabis.model.enums.WeaponType;
+import org.example.firstlabis.model.domain.enums.Mood;
+import org.example.firstlabis.model.domain.enums.WeaponType;
 
 import java.time.LocalDateTime;
 

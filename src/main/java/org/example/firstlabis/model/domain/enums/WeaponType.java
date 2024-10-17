@@ -1,4 +1,4 @@
-package org.example.firstlabis.model.enums;
+package org.example.firstlabis.model.domain.enums;
 
 public enum WeaponType {
     HAMMER,

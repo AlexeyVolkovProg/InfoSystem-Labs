@@ -1,4 +1,4 @@
-package org.example.firstlabis.model;
+package org.example.firstlabis.model.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
