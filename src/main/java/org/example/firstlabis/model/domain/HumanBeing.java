@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Table(name = "humans")
 public class HumanBeing {
 
     @Id
@@ -50,6 +51,5 @@ public class HumanBeing {
 
     @Enumerated(EnumType.STRING)
     private WeaponType weaponType;
-
 
 }
