@@ -1,11 +1,11 @@
 package org.example.firstlabis.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.firstlabis.dto.authentication.AuthResponseDTO;
-import org.example.firstlabis.dto.authentication.LoginRequestDTO;
-import org.example.firstlabis.dto.authentication.RegisterRequestDTO;
+import org.example.firstlabis.dto.authentication.response.JwtResponseDTO;
+import org.example.firstlabis.dto.authentication.request.LoginRequestDTO;
+import org.example.firstlabis.dto.authentication.request.RegisterRequestDTO;
 import org.example.firstlabis.service.AuthenticationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,17 +20,30 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> register(
-            @Valid @RequestBody RegisterRequestDTO request
+    public ResponseEntity<JwtResponseDTO> register(
+            @RequestBody RegisterRequestDTO request
     ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerUser(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(
-            @Valid @RequestBody LoginRequestDTO request
+    public ResponseEntity<JwtResponseDTO> login(
+            @RequestBody LoginRequestDTO request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
+
+    /**
+     * Принимаем запрос на регистрацию нового администратора
+     */
+    @PostMapping("/register-admin")
+    public ResponseEntity<JwtResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO request){
+        if (authenticationService.hasRegisteredAdmin()){ // проверка на наличие админа в системе, который может обработать
+            authenticationService.submitAdminRegistrationRequest(request);
+            return ResponseEntity.accepted().build();
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
 

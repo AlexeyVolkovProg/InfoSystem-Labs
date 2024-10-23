@@ -6,10 +6,10 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class Coordinates {
 
-    @Column(name = "x")
+    @Column(nullable = false)
     private int x;
 
-    @Column(name = "y", nullable = false)
+    @Column(nullable = false)
     private Double y;
 
 }
