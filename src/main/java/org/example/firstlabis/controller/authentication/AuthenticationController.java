@@ -1,4 +1,4 @@
-package org.example.firstlabis.controller;
+package org.example.firstlabis.controller.authentication;
 
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.authentication.response.JwtResponseDTO;
