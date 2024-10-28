@@ -1,5 +1,6 @@
 package org.example.firstlabis.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
@@ -30,7 +31,7 @@ public class HumanBeingService {
 
     public HumanBeingResponseDTO updateHumanBeing(Long id, HumanBeingUpdateDTO dto) {
         HumanBeing entity = humanBeingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("HumanBeing not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
         humanBeingMapper.updateEntityFromDto(dto, entity);
         entity = humanBeingRepository.save(entity);
         return humanBeingMapper.toResponseDto(entity);
@@ -38,7 +39,7 @@ public class HumanBeingService {
 
     public void deleteHumanBeing(Long id) {
         if (!humanBeingRepository.existsById(id)) {
-            throw new IllegalArgumentException("HumanBeing not found with id: " + id);
+            throw new EntityNotFoundException("HumanBeing not found with id: " + id);
         }
         humanBeingRepository.deleteById(id);
     }
@@ -46,13 +47,13 @@ public class HumanBeingService {
     @Transactional
     public void attachTheCar(Long idHumanBeing, Long idCar){
         if (!carRepository.existsById(idCar)) {
-            throw new IllegalArgumentException("Car not found with id: + id");
+            throw new EntityNotFoundException("Car not found with id: + id");
         }else{
             //todo оптимизировать запрос
             HumanBeing humanBeing = humanBeingRepository.findById(idHumanBeing)
-                    .orElseThrow(() -> new IllegalArgumentException("HumanBeing not found with id: " + idHumanBeing));
+                    .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + idHumanBeing));
             Car car = carRepository.findById(idCar)
-                    .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + idCar));
+                    .orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + idCar));
             humanBeing.setCar(car);
         }
     }
@@ -60,7 +61,7 @@ public class HumanBeingService {
 
     public HumanBeingResponseDTO findHumanBeingById(Long id) {
         HumanBeing entity = humanBeingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("HumanBeing not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
         return humanBeingMapper.toResponseDto(entity);
     }
 
