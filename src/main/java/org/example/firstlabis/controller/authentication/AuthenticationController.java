@@ -1,5 +1,9 @@
 package org.example.firstlabis.controller.authentication;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.authentication.response.JwtResponseDTO;
 import org.example.firstlabis.dto.authentication.request.LoginRequestDTO;
@@ -19,16 +23,26 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    @Operation(summary = "Register a new user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Successfully registered user"),
+            @ApiResponse(responseCode = "400", description = "Invalid registration data")
+    })
     @PostMapping("/register")
     public ResponseEntity<JwtResponseDTO> register(
-            @RequestBody RegisterRequestDTO request
+            @Parameter(description = "User registration data") @RequestBody RegisterRequestDTO request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.registerUser(request));
     }
 
+    @Operation(summary = "User login")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully logged in"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     @PostMapping("/login")
     public ResponseEntity<JwtResponseDTO> login(
-            @RequestBody LoginRequestDTO request
+            @Parameter(description = "User login credentials") @RequestBody LoginRequestDTO request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
@@ -36,6 +50,12 @@ public class AuthenticationController {
     /**
      * Принимаем запрос на регистрацию нового администратора
      */
+
+    @Operation(summary = "Request registration for a new admin")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Admin registration request submitted"),
+            @ApiResponse(responseCode = "400", description = "Invalid registration data")
+    })
     @PostMapping("/register-admin")
     public ResponseEntity<JwtResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO request){
         if (authenticationService.hasRegisteredAdmin()){ // проверка на наличие админа в системе, который может обработать

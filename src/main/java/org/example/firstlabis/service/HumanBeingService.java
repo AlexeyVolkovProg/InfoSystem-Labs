@@ -5,16 +5,21 @@ import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
 import org.example.firstlabis.mapper.domain.HumanBeingMapper;
+import org.example.firstlabis.model.domain.Car;
 import org.example.firstlabis.model.domain.HumanBeing;
+import org.example.firstlabis.model.security.User;
+import org.example.firstlabis.repository.CarRepository;
 import org.example.firstlabis.repository.HumanBeingRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class HumanBeingService {
     private final HumanBeingRepository humanBeingRepository;
+    private final CarRepository carRepository;
     private final HumanBeingMapper humanBeingMapper;
 
     public HumanBeingResponseDTO createHumanBeing(HumanBeingCreateDTO dto) {
@@ -37,6 +42,21 @@ public class HumanBeingService {
         }
         humanBeingRepository.deleteById(id);
     }
+
+    @Transactional
+    public void attachTheCar(Long idHumanBeing, Long idCar){
+        if (!carRepository.existsById(idCar)) {
+            throw new IllegalArgumentException("Car not found with id: + id");
+        }else{
+            //todo оптимизировать запрос
+            HumanBeing humanBeing = humanBeingRepository.findById(idHumanBeing)
+                    .orElseThrow(() -> new IllegalArgumentException("HumanBeing not found with id: " + idHumanBeing));
+            Car car = carRepository.findById(idCar)
+                    .orElseThrow(() -> new IllegalArgumentException("Car not found with id: " + idCar));
+            humanBeing.setCar(car);
+        }
+    }
+
 
     public HumanBeingResponseDTO findHumanBeingById(Long id) {
         HumanBeing entity = humanBeingRepository.findById(id)
