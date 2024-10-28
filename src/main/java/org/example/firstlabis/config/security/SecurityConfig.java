@@ -1,4 +1,4 @@
-package org.example.firstlabis.config;
+package org.example.firstlabis.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.repository.UserRepository;

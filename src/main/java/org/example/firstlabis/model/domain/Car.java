@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.firstlabis.model.audit.TrackEntity;
 
 @Entity
 @Setter
@@ -15,7 +16,7 @@ import lombok.Setter;
 @Table(name = "cars")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Car {
+public class Car extends TrackEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.firstlabis.model.audit.TrackEntity;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
 @Table(name = "humans")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HumanBeing {
+public class HumanBeing extends TrackEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,7 +73,4 @@ public class HumanBeing {
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type", nullable = false)
     private WeaponType weaponType;
-
-    @Column(name = "edit_admin_status",  nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean editAdminStatus = false;
 }

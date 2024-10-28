@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.domain.request.CarCreateDTO;
 import org.example.firstlabis.dto.domain.request.CarUpdateDTO;
 import org.example.firstlabis.dto.domain.response.CarResponseDTO;
-import org.example.firstlabis.service.CarService;
+import org.example.firstlabis.service.domain.CarService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

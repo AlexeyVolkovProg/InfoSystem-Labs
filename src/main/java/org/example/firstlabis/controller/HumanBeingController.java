@@ -9,7 +9,7 @@ import org.example.firstlabis.dto.domain.request.AssignCarToHumanDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
-import org.example.firstlabis.service.HumanBeingService;
+import org.example.firstlabis.service.domain.HumanBeingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

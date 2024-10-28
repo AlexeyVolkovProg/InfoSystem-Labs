@@ -7,7 +7,7 @@ import org.example.firstlabis.dto.error.ApiErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
-import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -40,8 +40,8 @@ public class GlobalExceptionHandler {
         return handleValidationException(ex, "Invalid request: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiErrorResponseDTO> handleAuthenticationException(AuthenticationException ex) {
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleAuthenticationException(AuthenticationServiceException ex) {
         return handleValidationException(ex, "Cannot authenticate: " + ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 

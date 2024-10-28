@@ -1,4 +1,4 @@
-package org.example.firstlabis.service;
+package org.example.firstlabis.service.domain;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
