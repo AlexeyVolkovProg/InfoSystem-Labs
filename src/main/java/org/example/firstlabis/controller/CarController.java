@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,6 +40,7 @@ public class CarController {
             @ApiResponse(responseCode = "200", description = "Successfully updated car"),
             @ApiResponse(responseCode = "404", description = "Car not found")
     })
+    @PreAuthorize("@carSecurityService.hasEditRights(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<CarResponseDTO> update(
             @Parameter(description = "ID of the car to update") @PathVariable Long id,
@@ -88,10 +90,30 @@ public class CarController {
             @ApiResponse(responseCode = "204", description = "Successfully deleted car"),
             @ApiResponse(responseCode = "404", description = "Car not found")
     })
+    @PreAuthorize("@carSecurityService.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID of the car to delete") @PathVariable Long id) {
         carService.deleteCar(id);
         return ResponseEntity.ok().build();
     }
-}
+
+    @Operation(summary = "Enable Admin Edit Status",
+            description = "Grants the ability to edit by an administrator for the specified car ID.")
+    @PreAuthorize("@carSecurityService.isOwner(#id)")
+    @PutMapping("/{id}/edit-status/allow")
+    public ResponseEntity<Void> enableAdminEditStatus(@PathVariable Long id){
+        carService.enableAdminEdit(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Disable Admin Edit Status",
+            description = "Revokes the ability to edit by an administrator for the specified car ID.")
+    @PreAuthorize("@carSecurityService.isOwner(#id)")
+    @PutMapping("/{id}/edit-status/delete")
+    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id){
+        carService.turnOffAdminEdit(id);
+        return ResponseEntity.ok().build();
+    }
+
+ }

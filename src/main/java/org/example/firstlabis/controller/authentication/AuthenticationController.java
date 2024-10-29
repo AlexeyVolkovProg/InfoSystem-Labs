@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.authentication.response.JwtResponseDTO;
 import org.example.firstlabis.dto.authentication.request.LoginRequestDTO;
 import org.example.firstlabis.dto.authentication.request.RegisterRequestDTO;
-import org.example.firstlabis.service.AuthenticationService;
+import org.example.firstlabis.service.security.jwt.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

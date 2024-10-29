@@ -7,6 +7,7 @@ import org.example.firstlabis.dto.domain.request.CarUpdateDTO;
 import org.example.firstlabis.dto.domain.response.CarResponseDTO;
 import org.example.firstlabis.mapper.domain.CarMapper;
 import org.example.firstlabis.model.domain.Car;
+import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.repository.CarRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,5 +63,29 @@ public class CarService {
      */
     public Page<CarResponseDTO> getAllByNameContaining(String substring, Pageable pageable) {
         return carRepository.findAllByNameContaining(substring, pageable).map(carMapper::toResponseDto);
+    }
+
+
+    /**
+     * Включает разрешение на редактирование сущности со стороны администраторов
+     * @param id сущности
+     */
+    public void enableAdminEdit(Long id){
+        setEditAdminStatus(id, true);
+    }
+
+    /**
+     * Выключает разрешение на редактирование сущности со стороны администраторов
+     * @param id сущности
+     */
+    public void turnOffAdminEdit(Long id){
+        setEditAdminStatus(id, false);
+    }
+
+    private void setEditAdminStatus(Long id, boolean status){
+        Car car = carRepository
+                .findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + id));
+        car.setEditAdminStatus(status);
+        carRepository.save(car);
     }
 }

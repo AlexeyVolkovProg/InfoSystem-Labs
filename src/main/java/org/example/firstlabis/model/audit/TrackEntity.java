@@ -9,6 +9,7 @@ import org.example.firstlabis.model.security.User;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public abstract class TrackEntity {
     @Column(name="create_date", nullable = false, updatable = false)
     public LocalDateTime createDate;
 
-    @LastModifiedBy
+    @LastModifiedDate
     @Column(name="last_modify_date", insertable = false)
     private LocalDateTime lastModifyDate;
 
@@ -35,7 +36,7 @@ public abstract class TrackEntity {
     private User owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "last_modify_user", nullable = false, updatable = false)
+    @JoinColumn(name = "last_modify_user")
     @LastModifiedBy
     private User lastModifyUser;
 

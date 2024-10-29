@@ -1,4 +1,4 @@
-package org.example.firstlabis.service;
+package org.example.firstlabis.service.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

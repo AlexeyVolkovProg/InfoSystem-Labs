@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,6 +40,7 @@ public class HumanBeingController {
             @ApiResponse(responseCode = "200", description = "Successfully updated human being"),
             @ApiResponse(responseCode = "404", description = "Human being not found")
     })
+    @PreAuthorize("@humanBeingSecurityService.hasEditRights(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<HumanBeingResponseDTO> update(
             @Parameter(description = "ID of the human being to update") @PathVariable Long id,
@@ -88,6 +90,7 @@ public class HumanBeingController {
             @ApiResponse(responseCode = "204", description = "Successfully deleted human being"),
             @ApiResponse(responseCode = "404", description = "Human being not found")
     })
+    @PreAuthorize("@humanBeingSecurityService.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID of the human being to delete") @PathVariable Long id) {
@@ -105,5 +108,24 @@ public class HumanBeingController {
             @Parameter(description = "Request to assign a car to a human being") @RequestBody AssignCarToHumanDTO request) {
         humanBeingService.attachTheCar(request.humanId(), request.carId());
         return ResponseEntity.ok("Car assigned to Human successfully.");
+    }
+
+    @Operation(summary = "Enable Admin Edit Status",
+            description = "Grants the ability to edit by an administrator for the specified car ID.")
+    @PreAuthorize("@humanBeingSecurityService.isOwner(#id)")
+    @PutMapping("/{id}/edit-status/allow")
+    public ResponseEntity<Void> enableAdminEditStatus(
+            @PathVariable Long id){
+        humanBeingService.enableAdminEdit(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Disable Admin Edit Status",
+            description = "Revokes the ability to edit by an administrator for the specified car ID.")
+    @PreAuthorize("@humanBeingSecurityService.isOwner(#id)")
+    @PutMapping("/{id}/edit-status/delete")
+    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id){
+        humanBeingService.turnOffAdminEdit(id);
+        return ResponseEntity.ok().build();
     }
 }

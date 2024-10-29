@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 public abstract class TrackEntitySecurityService <T extends TrackEntity, ID> {
     protected abstract T findById(ID id);
 
+    /**
+     * Проверка, является ли текущий пользователь владельцем сущности над которой хочет совершить действия
+     */
     public boolean isOwner(ID ownedEntityId) {
         var entity = findById(ownedEntityId);
         var currentUser = getCurrentUser();
@@ -26,6 +29,9 @@ public abstract class TrackEntitySecurityService <T extends TrackEntity, ID> {
         return isOwner(currentUser, entity);
     }
 
+    /**
+     * Проверка есть ли у пользователя права на редактирование данной сущности
+     */
     public boolean hasEditRights(ID ownedEntityId) {
         var entity = findById(ownedEntityId);
         var currentUser = getCurrentUser();
@@ -34,6 +40,11 @@ public abstract class TrackEntitySecurityService <T extends TrackEntity, ID> {
     }
 
     //todo проверить достается ли по-настоящему роль
+
+    /**
+     * Проверяет есть ли у пользователя права на редактирования данной сущности на основе роли пользователя
+     * и разрешения на редактирование, которое установлено на данной сущности
+     */
     private boolean hasEditRights(User user, TrackEntity entity) {
         boolean isOwner = isOwner(user, entity);
         log.info(user.getRole().toString());
@@ -41,10 +52,16 @@ public abstract class TrackEntitySecurityService <T extends TrackEntity, ID> {
         return isOwner || isAdminAndIsAdminEditAllowed;
     }
 
+    /**
+     * Проверка является ли пользователь владельцем сущности или нет
+     */
     private boolean isOwner(User user, TrackEntity entity) {
         return entity.getOwner().getId().equals(user.getId());
     }
 
+    /**
+     * Метод возвращающий текущего пользователя
+     */
     private User getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) authentication.getPrincipal();

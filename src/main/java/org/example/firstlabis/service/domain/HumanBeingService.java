@@ -84,4 +84,31 @@ public class HumanBeingService {
     public Page<HumanBeingResponseDTO> getAllByNameContaining(String substring, Pageable pageable) {
         return humanBeingRepository.findAllByNameContaining(substring, pageable).map(humanBeingMapper::toResponseDto);
     }
+
+    /**
+     * Включает разрешение на редактирование сущности со стороны администраторов
+     * @param id сущности
+     */
+    public void enableAdminEdit(Long id){
+        setEditAdminStatus(id, true);
+    }
+
+    /**
+     * Выключает разрешение на редактирование сущности со стороны администраторов
+     * @param id сущности
+     */
+    public void turnOffAdminEdit(Long id){
+        setEditAdminStatus(id, false);
+    }
+
+    private void setEditAdminStatus(Long id, boolean status){
+        HumanBeing humanBeing = humanBeingRepository
+                .findById(id).orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
+        humanBeing.setEditAdminStatus(status);
+        humanBeingRepository.save(humanBeing);
+    }
+
+
+
+
 }
