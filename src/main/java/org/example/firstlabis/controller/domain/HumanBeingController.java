@@ -1,4 +1,4 @@
-package org.example.firstlabis.controller;
+package org.example.firstlabis.controller.domain;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

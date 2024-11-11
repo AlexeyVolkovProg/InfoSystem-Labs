@@ -4,14 +4,12 @@ package org.example.firstlabis.model.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.firstlabis.model.audit.TrackEntity;
 
 @Entity
 @Setter
+@Builder
 @Getter
 @Table(name = "cars")
 @NoArgsConstructor

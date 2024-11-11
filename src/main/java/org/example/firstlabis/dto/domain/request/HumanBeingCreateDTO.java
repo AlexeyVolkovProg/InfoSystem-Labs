@@ -5,7 +5,6 @@ import org.example.firstlabis.model.domain.Coordinates;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 
-
 public record HumanBeingCreateDTO(
         @JsonProperty(value = "name", required = true)
         String name,

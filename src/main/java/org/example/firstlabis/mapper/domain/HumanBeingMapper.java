@@ -5,15 +5,15 @@ import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
 import org.example.firstlabis.mapper.EntityMapper;
 import org.example.firstlabis.model.domain.HumanBeing;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {CoordinatesMapper.class, CarMapper.class})
+@Mapper(componentModel = "spring", uses = {CoordinatesMapper.class, CarMapper.class},
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface HumanBeingMapper extends EntityMapper<HumanBeingResponseDTO, HumanBeing> {
     HumanBeing toEntity(HumanBeingCreateDTO request);
     HumanBeing toEntity(HumanBeingUpdateDTO request);
+
+    HumanBeingCreateDTO toCreateDTO(HumanBeing request);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(HumanBeingUpdateDTO dto, @MappingTarget HumanBeing entity);
