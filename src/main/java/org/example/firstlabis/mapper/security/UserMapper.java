@@ -7,5 +7,4 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper extends EntityMapper<UserDto, User> {
-    //todo пока что не используем , заготовка
 }
