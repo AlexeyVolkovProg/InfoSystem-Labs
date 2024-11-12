@@ -27,7 +27,7 @@ public class AuthenticationAdminController {
     })
     @PostMapping("/registration-requests/{userId}")
     public ResponseEntity<Void> approveAdminRegistrationRequest(
-            @Parameter(description = "ID of the user to approve") @PathVariable Long userId){
+            @Parameter(description = "ID of the user to approve") @PathVariable Long userId) {
         authenticationService.approveAdminRegistrationRequest(userId);
         return ResponseEntity.ok().build();
     }
@@ -39,7 +39,7 @@ public class AuthenticationAdminController {
     })
     @DeleteMapping("/registration-requests/{userId}")
     public ResponseEntity<Void> rejectAdminRegistrationRequest(
-            @Parameter(description = "ID of the user to reject") @PathVariable Long userId){
+            @Parameter(description = "ID of the user to reject") @PathVariable Long userId) {
         authenticationService.rejectAdminRegistrationRequest(userId);
         return ResponseEntity.ok().build();
     }
@@ -51,7 +51,9 @@ public class AuthenticationAdminController {
     })
     @GetMapping("/registration-requests")
     public ResponseEntity<Page<UserDto>> getPendingRegistrationRequest(
-            @Parameter(description = "Pagination information") @PageableDefault Pageable pageable){
+            @Parameter(description = "Pagination information") @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(authenticationService.getPendingRegistrationRequest(pageable));
-    };
+    }
+
+    ;
 }

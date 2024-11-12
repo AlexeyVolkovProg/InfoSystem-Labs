@@ -18,21 +18,22 @@ public class SpecialFunctionController {
 
     @Operation(summary = "Delete all HumanBeing entities by WeaponType")
     @DeleteMapping("/delete/weaponType/{weaponType}")
-    public ResponseEntity<Void> deleteAllByWeaponType(@PathVariable WeaponType weaponType){
+    public ResponseEntity<Void> deleteAllByWeaponType(@PathVariable WeaponType weaponType) {
         humanBeingService.deleteAllByWeaponType(weaponType);
         return ResponseEntity.noContent().build();
 
     }
+
     @Operation(summary = "Deletes all HumanBeing entities where the hasToothpick field is false.")
     @DeleteMapping("/delete/toothpick-false")
-    public ResponseEntity<Void> deleteAllByFalseToothpick(){
+    public ResponseEntity<Void> deleteAllByFalseToothpick() {
         humanBeingService.deleteAllWithOutToothpicks();
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Sets the mood field of all HumanBeing entities to SORROW.")
     @PutMapping("/assign/sorrow-mood")
-    public ResponseEntity<Void> assignSorrowMoodForAllHumans(){
+    public ResponseEntity<Void> assignSorrowMoodForAllHumans() {
         humanBeingService.setAllMoodToSorrow();
         return ResponseEntity.noContent().build();
     }
@@ -40,7 +41,7 @@ public class SpecialFunctionController {
     @Operation(summary = "Returns the count of HumanBeing entities where minutesOfWaiting " +
             "is less than the specified value.")
     @GetMapping("/count-minutes-less-than")
-    public ResponseEntity<Long> countByMinutesOfWaitingLessThan(@RequestParam long maxMinutesOfWaiting){
+    public ResponseEntity<Long> countByMinutesOfWaitingLessThan(@RequestParam long maxMinutesOfWaiting) {
         long count = humanBeingService.countByMinutesOfWaitingLessThan(maxMinutesOfWaiting);
         return ResponseEntity.ok(count);
     }
@@ -51,7 +52,5 @@ public class SpecialFunctionController {
         Set<Integer> uniqueImpactSpeeds = humanBeingService.getUniqueImpactSpeeds();
         return ResponseEntity.ok(uniqueImpactSpeeds);
     }
-
-
 
 }

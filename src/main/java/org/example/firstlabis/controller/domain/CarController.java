@@ -48,7 +48,6 @@ public class CarController {
         return ResponseEntity.ok(carService.updateCar(id, request));
     }
 
-
     @Operation(summary = "Find a car by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved car"),
@@ -102,7 +101,7 @@ public class CarController {
             description = "Grants the ability to edit by an administrator for the specified car ID.")
     @PreAuthorize("@carSecurityService.isOwner(#id)")
     @PutMapping("/{id}/edit-status/allow")
-    public ResponseEntity<Void> enableAdminEditStatus(@PathVariable Long id){
+    public ResponseEntity<Void> enableAdminEditStatus(@PathVariable Long id) {
         carService.enableAdminEdit(id);
         return ResponseEntity.ok().build();
     }
@@ -111,9 +110,9 @@ public class CarController {
             description = "Revokes the ability to edit by an administrator for the specified car ID.")
     @PreAuthorize("@carSecurityService.isOwner(#id)")
     @PutMapping("/{id}/edit-status/delete")
-    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id){
+    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id) {
         carService.turnOffAdminEdit(id);
         return ResponseEntity.ok().build();
     }
 
- }
+}

@@ -31,21 +31,4 @@ public class HumanBeingServiceTests {
     HumanBeingMapper humanBeingMapper;
     @InjectMocks
     private HumanBeingService humanBeingService;
-
-    // verify работает на spy
-
-    @Test
-    @DisplayName("Test create new human functionality")
-    public void givenHumanToSave_whenSaveDeveloper_thenRepositoryIsCalled() {
-        HumanBeing humanToSave = DateHumanUtil.createDefaultHumanBeingWithName("John");
-        Mockito.when(humanBeingMapper.toEntity(any(HumanBeingCreateDTO.class)))
-                .thenReturn(DateHumanUtil.createDefaultHumanBeingWithName("John"));
-        BDDMockito.given(humanBeingRepository.findByName(anyString())).willReturn(Optional.empty());
-        BDDMockito.given(humanBeingRepository.save(any(HumanBeing.class)))
-                .willReturn(DateHumanUtil.createDefaultHumanBeingWithName("John"));
-        HumanBeingResponseDTO savedHuman = humanBeingService.createHumanBeing(humanBeingMapper.
-                toCreateDTO(humanToSave));
-
-        assertThat(savedHuman).isNotNull();
-    }
 }

@@ -57,14 +57,13 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "400", description = "Invalid registration data")
     })
     @PostMapping("/register-admin")
-    public ResponseEntity<JwtResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO request){
-        if (authenticationService.hasRegisteredAdmin()){ // проверка на наличие админа в системе, который может обработать
+    public ResponseEntity<JwtResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO request) {
+        if (authenticationService.hasRegisteredAdmin()) { // проверка на наличие админа в системе, который может обработать
             authenticationService.submitAdminRegistrationRequest(request);
             return ResponseEntity.accepted().build();
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
-
 
 }

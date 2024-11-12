@@ -11,12 +11,13 @@ import org.springframework.stereotype.Service;
 
 /**
  * Абстрактный класс задающий логику проверки прав на изменения сущностей пользователями с разными ролями
- * @param <T> сущность, которую хотят изменить
+ *
+ * @param <T>  сущность, которую хотят изменить
  * @param <ID> индикатор сущности
  */
 @Service
 @Slf4j
-public abstract class TrackEntitySecurityService <T extends TrackEntity, ID> {
+public abstract class TrackEntitySecurityService<T extends TrackEntity, ID> {
     protected abstract T findById(ID id);
 
     /**

@@ -23,11 +23,11 @@ import java.time.LocalDateTime;
 public abstract class TrackEntity {
 
     @CreatedDate
-    @Column(name="create_date", nullable = false, updatable = false)
+    @Column(name = "create_date", nullable = false, updatable = false)
     public LocalDateTime createDate;
 
     @LastModifiedDate
-    @Column(name="last_modify_date", insertable = false)
+    @Column(name = "last_modify_date", insertable = false)
     private LocalDateTime lastModifyDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,6 +40,6 @@ public abstract class TrackEntity {
     @LastModifiedBy
     private User lastModifyUser;
 
-    @Column(name = "edit_admin_status",  nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "edit_admin_status", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean editAdminStatus = false;
 }

@@ -10,7 +10,6 @@ import org.example.firstlabis.model.domain.Car;
 import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
-import org.example.firstlabis.model.security.User;
 import org.example.firstlabis.repository.CarRepository;
 import org.example.firstlabis.repository.HumanBeingRepository;
 import org.example.firstlabis.service.security.HumanBeingSecurityService;
@@ -31,7 +30,7 @@ public class HumanBeingService {
     private final HumanBeingSecurityService humanBeingSecurityService;
 
     public HumanBeingResponseDTO createHumanBeing(HumanBeingCreateDTO dto) {
-        if (humanBeingRepository.findByName(dto.name()).isPresent()){
+        if (humanBeingRepository.findByName(dto.name()).isPresent()) {
             throw new EntityNotFoundException("HumanBeing already exists with name " + dto.name());
         }
         HumanBeing entity = humanBeingMapper.toEntity(dto);
@@ -55,10 +54,10 @@ public class HumanBeingService {
     }
 
     @Transactional
-    public void attachTheCar(Long idHumanBeing, Long idCar){
+    public void attachTheCar(Long idHumanBeing, Long idCar) {
         if (!carRepository.existsById(idCar)) {
             throw new EntityNotFoundException("Car not found with id: + id");
-        }else{
+        } else {
             //todo оптимизировать запрос
             HumanBeing humanBeing = humanBeingRepository.findById(idHumanBeing)
                     .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + idHumanBeing));
@@ -67,7 +66,6 @@ public class HumanBeingService {
             humanBeing.setCar(car);
         }
     }
-
 
     public HumanBeingResponseDTO findHumanBeingById(Long id) {
         HumanBeing entity = humanBeingRepository.findById(id)
@@ -97,21 +95,23 @@ public class HumanBeingService {
 
     /**
      * Включает разрешение на редактирование сущности со стороны администраторов
+     *
      * @param id сущности
      */
-    public void enableAdminEdit(Long id){
+    public void enableAdminEdit(Long id) {
         setEditAdminStatus(id, true);
     }
 
     /**
      * Выключает разрешение на редактирование сущности со стороны администраторов
+     *
      * @param id сущности
      */
-    public void turnOffAdminEdit(Long id){
+    public void turnOffAdminEdit(Long id) {
         setEditAdminStatus(id, false);
     }
 
-    private void setEditAdminStatus(Long id, boolean status){
+    private void setEditAdminStatus(Long id, boolean status) {
         HumanBeing humanBeing = humanBeingRepository
                 .findById(id).orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
         humanBeing.setEditAdminStatus(status);
@@ -120,12 +120,13 @@ public class HumanBeingService {
 
     /**
      * Удаляем всех human с определенным типом оружия, с проверкой прав на редактирование
+     *
      * @param weaponType тип оружия
      */
     @Transactional
-    public void deleteAllByWeaponType(WeaponType weaponType){
+    public void deleteAllByWeaponType(WeaponType weaponType) {
         humanBeingRepository.findAllByWeaponType(weaponType).forEach(humanBeing -> {
-            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())){
+            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())) {
                 humanBeingRepository.delete(humanBeing);
             }
         });
@@ -135,9 +136,9 @@ public class HumanBeingService {
      * Удаляем всех human без зубочисток, с проверкой прав на редактирование
      */
     @Transactional
-    public void deleteAllWithOutToothpicks(){
+    public void deleteAllWithOutToothpicks() {
         humanBeingRepository.findAllByHasToothpickFalse().forEach(humanBeing -> {
-            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())){
+            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())) {
                 humanBeingRepository.delete(humanBeing);
             }
         });
@@ -148,9 +149,9 @@ public class HumanBeingService {
      * Выставляем всем human грустное настроение, с проверкой на редактирование
      */
     @Transactional
-    public void setAllMoodToSorrow(){
+    public void setAllMoodToSorrow() {
         humanBeingRepository.findAll().forEach(humanBeing -> {
-            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())){
+            if (humanBeingSecurityService.hasEditRights(humanBeing.getId())) {
                 humanBeing.setMood(Mood.SORROW);
                 humanBeingRepository.save(humanBeing);
             }
@@ -160,20 +161,18 @@ public class HumanBeingService {
     /**
      * Возвращает кол-во Human, у которых поле MinutesOfWaiting меньше заданного
      */
-    public long countByMinutesOfWaitingLessThan(Long maxMinutesOfWaiting){
+    public long countByMinutesOfWaitingLessThan(Long maxMinutesOfWaiting) {
         return humanBeingRepository.countByMinutesOfWaitingLessThan(maxMinutesOfWaiting);
     }
 
     /**
      * Возвращает множество уникальных значений поля impactSpeed
      */
-    public Set<Integer> getUniqueImpactSpeeds(){
+    public Set<Integer> getUniqueImpactSpeeds() {
         return humanBeingRepository.findAll()
                 .stream()
                 .map(HumanBeing::getImpactSpeed)
                 .collect(Collectors.toSet());
     }
-
-
 
 }

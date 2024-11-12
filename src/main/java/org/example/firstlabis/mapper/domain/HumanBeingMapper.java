@@ -11,6 +11,7 @@ import org.mapstruct.*;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface HumanBeingMapper extends EntityMapper<HumanBeingResponseDTO, HumanBeing> {
     HumanBeing toEntity(HumanBeingCreateDTO request);
+
     HumanBeing toEntity(HumanBeingUpdateDTO request);
 
     HumanBeingCreateDTO toCreateDTO(HumanBeing request);

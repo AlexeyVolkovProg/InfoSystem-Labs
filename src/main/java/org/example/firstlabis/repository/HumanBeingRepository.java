@@ -1,6 +1,5 @@
 package org.example.firstlabis.repository;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.example.firstlabis.model.domain.HumanBeing;
@@ -19,6 +18,7 @@ public interface HumanBeingRepository extends JpaRepository<HumanBeing, Long> {
 
     Page<HumanBeing> findAllByNameAndSoundtrackName(@NotNull String name, @NotNull String soundtrack,
                                                     @NonNull Pageable pageable);
+
     Page<HumanBeing> findAllByNameContaining(@NonNull String substring, @NonNull Pageable pageable);
 
     Optional<HumanBeing> findByName(@NotNull String name);

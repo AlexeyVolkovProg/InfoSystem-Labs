@@ -18,7 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -58,7 +57,6 @@ public class AuthenticationService {
         return generateJwt(user);
     }
 
-
     /**
      * Принять запрос на регистрацию пользователя в системе
      */
@@ -87,7 +85,6 @@ public class AuthenticationService {
         validateUserNotEnabled(user); // проверяем не был ли ранее активирован этот пользователь
         userRepository.delete(user);
     }
-
 
     /**
      * Метод создания юзера с определенной ролью и активацией в системе
@@ -188,14 +185,15 @@ public class AuthenticationService {
                 .build();
     }
 
-    private UserDto mapToUserDto(User user){
+    private UserDto mapToUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .build();
     }
 
-    public Page<UserDto> getPendingRegistrationRequest(Pageable pageable){
+    public Page<UserDto> getPendingRegistrationRequest(Pageable pageable) {
         return userRepository.findAllByEnabledFalse(pageable).map(this::mapToUserDto);
     }
+
 }

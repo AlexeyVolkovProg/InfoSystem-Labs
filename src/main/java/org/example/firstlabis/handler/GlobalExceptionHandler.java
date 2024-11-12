@@ -86,7 +86,4 @@ public class GlobalExceptionHandler {
         return handleValidationException(ex, "Неизвестная ошибка", HttpStatus.BAD_REQUEST);
     }
 
-
-
-
 }

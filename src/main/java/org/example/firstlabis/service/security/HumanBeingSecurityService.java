@@ -6,10 +6,9 @@ import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.repository.HumanBeingRepository;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
-public class HumanBeingSecurityService extends TrackEntitySecurityService<HumanBeing, Long>{
+public class HumanBeingSecurityService extends TrackEntitySecurityService<HumanBeing, Long> {
 
     private final HumanBeingRepository humanBeingRepository;
 
@@ -18,4 +17,5 @@ public class HumanBeingSecurityService extends TrackEntitySecurityService<HumanB
         return humanBeingRepository.findById(id).
                 orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
     }
+
 }

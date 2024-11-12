@@ -16,7 +16,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
-
 @Entity
 @Getter
 @Setter
@@ -72,4 +71,5 @@ public class HumanBeing extends TrackEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type", nullable = false)
     private WeaponType weaponType;
+
 }

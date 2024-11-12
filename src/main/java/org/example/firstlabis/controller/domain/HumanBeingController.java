@@ -115,7 +115,7 @@ public class HumanBeingController {
     @PreAuthorize("@humanBeingSecurityService.isOwner(#id)")
     @PutMapping("/{id}/edit-status/allow")
     public ResponseEntity<Void> enableAdminEditStatus(
-            @PathVariable Long id){
+            @PathVariable Long id) {
         humanBeingService.enableAdminEdit(id);
         return ResponseEntity.ok().build();
     }
@@ -124,7 +124,7 @@ public class HumanBeingController {
             description = "Revokes the ability to edit by an administrator for the specified car ID.")
     @PreAuthorize("@humanBeingSecurityService.isOwner(#id)")
     @PutMapping("/{id}/edit-status/delete")
-    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id){
+    public ResponseEntity<Void> deleteAdminEditStatus(@PathVariable Long id) {
         humanBeingService.turnOffAdminEdit(id);
         return ResponseEntity.ok().build();
     }

@@ -2,7 +2,7 @@ package org.example.firstlabis.dto.domain.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record CarUpdateDTO (
+public record CarUpdateDTO(
         @JsonProperty(value = "name", required = true)
         String name,
 

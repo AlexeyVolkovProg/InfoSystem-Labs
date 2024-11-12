@@ -22,8 +22,8 @@ public class AdminInitializer {
 
     @PostConstruct
     @Transactional
-    public void initializeFirstAdmin(){
-        if (userRepository.findByUsername(adminProperties.getUsername()).isEmpty()){
+    public void initializeFirstAdmin() {
+        if (userRepository.findByUsername(adminProperties.getUsername()).isEmpty()) {
             User adminUser = new User();
             adminUser.setUsername(adminProperties.getUsername());
             adminUser.setPassword(passwordEncoder.encode(adminProperties.getPassword()));
