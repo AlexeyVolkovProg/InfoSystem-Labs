@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -79,6 +80,11 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ApiErrorResponseDTO> handleAuthorizationDeniedException(Exception ex) {
+        return handleValidationException(ex, "Недостаточно прав для доступа", HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Throwable.class)
