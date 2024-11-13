@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
                         request.password(),
-                        user.getAuthorities() // todo точно ли нужно, если отдельно администраторов регать
+                        user.getAuthorities()
                 )
         );
         return generateJwt(user);
@@ -173,7 +174,8 @@ public class AuthenticationService {
      */
     private JwtResponseDTO generateJwt(User user) {
         String jwt = jwtService.generateToken(user);
-        return new JwtResponseDTO(jwt);
+        return new JwtResponseDTO(jwt, user.getAuthorities().stream().findFirst()
+                .map(GrantedAuthority::getAuthority).get());
     }
 
     private User mapToUser(RegisterRequestDTO request, Role role, Boolean enabled) {
