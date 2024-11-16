@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +27,7 @@ public class AuthenticationAdminController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PostMapping("/registration-requests/{userId}")
+    @PreAuthorize("@userSecurityService.isEnabled()")
     public ResponseEntity<Void> approveAdminRegistrationRequest(
             @Parameter(description = "ID of the user to approve") @PathVariable Long userId) {
         authenticationService.approveAdminRegistrationRequest(userId);
@@ -37,6 +39,7 @@ public class AuthenticationAdminController {
             @ApiResponse(responseCode = "200", description = "Successfully rejected registration request"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
+    @PreAuthorize("@userSecurityService.isEnabled()")
     @DeleteMapping("/registration-requests/{userId}")
     public ResponseEntity<Void> rejectAdminRegistrationRequest(
             @Parameter(description = "ID of the user to reject") @PathVariable Long userId) {
@@ -49,11 +52,10 @@ public class AuthenticationAdminController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved pending requests"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
+    @PreAuthorize("@userSecurityService.isEnabled()")
     @GetMapping("/registration-requests")
     public ResponseEntity<Page<UserDto>> getPendingRegistrationRequest(
             @Parameter(description = "Pagination information") @PageableDefault Pageable pageable) {
         return ResponseEntity.ok(authenticationService.getPendingRegistrationRequest(pageable));
     }
-
-    ;
 }

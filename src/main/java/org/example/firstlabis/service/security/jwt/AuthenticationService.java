@@ -34,7 +34,7 @@ public class AuthenticationService {
     public JwtResponseDTO authenticate(LoginRequestDTO request) {
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + request.username()));
-        validateUserEnabled(user); // проверка, активирован ли пользователь
+//        validateUserEnabled(user); // проверка, активирован ли пользователь
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
@@ -46,14 +46,14 @@ public class AuthenticationService {
     }
 
     public JwtResponseDTO registerUser(RegisterRequestDTO request) {
-        return registerEnabled(request, Role.USER);
+        boolean enabled = true;
+        return registerEnabled(request, Role.USER, enabled);
     }
 
     /**
-     * Метод регистрации и активации пользователя
+     * Метод регистрации и активации пользователя(для role:admin в первых раз без активации, пока ее не подтвердят)
      */
-    private JwtResponseDTO registerEnabled(RegisterRequestDTO request, Role role) {
-        boolean enabled = true;
+    private JwtResponseDTO registerEnabled(RegisterRequestDTO request, Role role, Boolean enabled) {
         User user = createUser(request, role, enabled);
         return generateJwt(user);
     }
@@ -61,10 +61,10 @@ public class AuthenticationService {
     /**
      * Принять запрос на регистрацию пользователя в системе
      */
-    public void submitAdminRegistrationRequest(RegisterRequestDTO request) {
+    public JwtResponseDTO submitAdminRegistrationRequest(RegisterRequestDTO request) {
         checkFirstAdminRegistration();
         boolean enabled = false; // пока что пользователь не активирован
-        createUser(request, Role.ADMIN, enabled);
+        return registerEnabled(request, Role.ADMIN, enabled);
     }
 
     /**
@@ -73,7 +73,7 @@ public class AuthenticationService {
     public void approveAdminRegistrationRequest(Long userId) {
         User user = userRepository.findUserById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
-        user.setEnabled(true); // активируем пользователя
+        user.setEnabledStatus(true); // активируем пользователя
         userRepository.save(user);
     }
 
@@ -137,8 +137,8 @@ public class AuthenticationService {
      * Проверка необходима на этапе авторизации
      */
     private void validateUserEnabled(User user) {
-        if (!user.isEnabled()) {
-            throw new AuthenticationServiceException("User is disabled: " + user.getUsername());
+        if (!user.isEnabledStatus()) {
+            throw new AuthenticationServiceException("User is xyz: " + user.getUsername());
         }
     }
 
@@ -148,7 +148,7 @@ public class AuthenticationService {
      * Необходим для проверок при попытках удалить действующих администраторов
      */
     private void validateUserNotEnabled(User user) {
-        if (user.isEnabled()) {
+        if (user.isEnabledStatus()) {
             throw new AuthenticationServiceException("Cannot delete an enabled user");
         }
     }
@@ -183,7 +183,7 @@ public class AuthenticationService {
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
                 .role(role)
-                .enabled(enabled) //todo проверить правда ли user активируется
+                .enabledStatus(enabled) //todo проверить правда ли user активируется
                 .build();
     }
 
@@ -195,7 +195,7 @@ public class AuthenticationService {
     }
 
     public Page<UserDto> getPendingRegistrationRequest(Pageable pageable) {
-        return userRepository.findAllByEnabledFalse(pageable).map(this::mapToUserDto);
+        return userRepository.findAllByEnabledStatusFalse(pageable).map(this::mapToUserDto);
     }
 
 }

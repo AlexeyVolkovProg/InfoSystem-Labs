@@ -28,7 +28,7 @@ public class AdminInitializer {
             adminUser.setUsername(adminProperties.getUsername());
             adminUser.setPassword(passwordEncoder.encode(adminProperties.getPassword()));
             adminUser.setRole(Role.ADMIN);
-            adminUser.setEnabled(true);
+            adminUser.setEnabledStatus(true);
             userRepository.save(adminUser);
         }
     }

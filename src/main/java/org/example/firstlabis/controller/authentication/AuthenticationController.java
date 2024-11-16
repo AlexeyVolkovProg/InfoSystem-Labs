@@ -59,8 +59,7 @@ public class AuthenticationController {
     @PostMapping("/register-admin")
     public ResponseEntity<JwtResponseDTO> registerAdmin(@RequestBody RegisterRequestDTO request) {
         if (authenticationService.hasRegisteredAdmin()) { // проверка на наличие админа в системе, который может обработать
-            authenticationService.submitAdminRegistrationRequest(request);
-            return ResponseEntity.accepted().build();
+            return ResponseEntity.ok(authenticationService.submitAdminRegistrationRequest(request));
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }

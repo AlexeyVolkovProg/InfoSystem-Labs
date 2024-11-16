@@ -32,7 +32,7 @@ public class User implements UserDetails {
     private Role role;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    private boolean enabledStatus;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
