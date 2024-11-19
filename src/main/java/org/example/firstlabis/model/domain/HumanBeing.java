@@ -10,9 +10,6 @@ import lombok.Setter;
 import org.example.firstlabis.model.audit.TrackEntity;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +34,6 @@ public class HumanBeing extends TrackEntity {
     @Embedded
     private Coordinates coordinates;
 
-    @CreationTimestamp
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
@@ -50,7 +46,6 @@ public class HumanBeing extends TrackEntity {
     private Boolean hasToothpick;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "car_id", nullable = true)
     private Car car;
 
@@ -71,5 +66,10 @@ public class HumanBeing extends TrackEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "weapon_type", nullable = false)
     private WeaponType weaponType;
+
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = LocalDateTime.now();
+    }
 
 }

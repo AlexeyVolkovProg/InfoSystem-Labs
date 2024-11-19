@@ -1,6 +1,5 @@
 package org.example.firstlabis.service.domain;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.domain.request.CarCreateDTO;
 import org.example.firstlabis.dto.domain.request.CarUpdateDTO;
@@ -28,7 +27,7 @@ public class CarService {
 
     public CarResponseDTO updateCar(Long id, CarUpdateDTO dto) {
         Car entity = carRepository
-                .findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + id));
+                .findById(id).orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
         carMapper.updateEntityFromDto(dto, entity);
         entity = carRepository.save(entity);
         return carMapper.toResponseDto(entity);
@@ -36,14 +35,14 @@ public class CarService {
 
     public void deleteCar(Long id) {
         if (!carRepository.existsById(id)) {
-            throw new EntityNotFoundException("Car not found with id: " + id);
+            throw new RuntimeException("Car not found with id: " + id);
         }
         carRepository.deleteById(id);
     }
 
     public CarResponseDTO findCarById(Long id) {
         Car entity = carRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
         return carMapper.toResponseDto(entity);
     }
 
@@ -84,7 +83,7 @@ public class CarService {
 
     private void setEditAdminStatus(Long id, boolean status) {
         Car car = carRepository
-                .findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + id));
+                .findById(id).orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
         car.setEditAdminStatus(status);
         carRepository.save(car);
     }
