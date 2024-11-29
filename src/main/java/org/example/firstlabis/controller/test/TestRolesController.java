@@ -1,4 +1,4 @@
-package org.example.firstlabis.controller;
+package org.example.firstlabis.controller.test;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @EnableMethodSecurity
 @RequestMapping("/api/test")
-public class TestController {
+public class TestRolesController {
 
     @GetMapping("/user")
     @PreAuthorize("hasAnyAuthority('USER')")

@@ -21,7 +21,13 @@ import java.util.List;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfigFilterChain {
-    private static final String[] WHITE_LIST_URL = {"/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**"};
+    private static final String[] WHITE_LIST_URL = {"/api/auth/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/ws/**",
+            "/app/**",
+            "/test/**",
+            "/app.js"};
     private static final String[] ADMIN_LIST_URL = {"/api/admin/**"};
 
     private final AuthenticationProvider authenticationProvider;

@@ -1,11 +1,16 @@
 package org.example.firstlabis.service.domain;
 
+import com.google.gson.Gson;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.firstlabis.controller.socket.enums.OperationType;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
+import org.example.firstlabis.dto.socket.HumanBeingSocketMessage;
 import org.example.firstlabis.mapper.domain.HumanBeingMapper;
+import org.example.firstlabis.mapper.socket.HumanBeingMessageMapper;
 import org.example.firstlabis.model.domain.Car;
 import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.model.domain.enums.Mood;
@@ -15,26 +20,36 @@ import org.example.firstlabis.repository.HumanBeingRepository;
 import org.example.firstlabis.service.security.HumanBeingSecurityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HumanBeingService {
     private final HumanBeingRepository humanBeingRepository;
     private final CarRepository carRepository;
     private final HumanBeingMapper humanBeingMapper;
+    private final HumanBeingMessageMapper humanBeingMessageMapper;
     private final HumanBeingSecurityService humanBeingSecurityService;
+    private final SimpMessagingTemplate messagingTemplate;
+
 
     public HumanBeingResponseDTO createHumanBeing(HumanBeingCreateDTO dto) {
         if (humanBeingRepository.findByName(dto.name()).isPresent()) {
             throw new EntityNotFoundException("HumanBeing already exists with name " + dto.name());
         }
+        log.info("я тут");
         HumanBeing entity = humanBeingMapper.toEntity(dto);
         entity = humanBeingRepository.save(entity);
+
+        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
+        notifyFrontend(socketMessage);
         return humanBeingMapper.toResponseDto(entity);
     }
 
@@ -43,6 +58,10 @@ public class HumanBeingService {
                 .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
         humanBeingMapper.updateEntityFromDto(dto, entity);
         entity = humanBeingRepository.save(entity);
+
+        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
+        notifyFrontend(socketMessage);
+
         return humanBeingMapper.toResponseDto(entity);
     }
 
@@ -50,7 +69,11 @@ public class HumanBeingService {
         if (!humanBeingRepository.existsById(id)) {
             throw new EntityNotFoundException("HumanBeing not found with id: " + id);
         }
+        HumanBeing entity = humanBeingRepository.findById(id).orElseThrow();
         humanBeingRepository.deleteById(id);
+
+        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
+        notifyFrontend(socketMessage);
     }
 
     @Transactional
@@ -58,12 +81,15 @@ public class HumanBeingService {
         if (!carRepository.existsById(idCar)) {
             throw new EntityNotFoundException("Car not found with id: + id");
         } else {
-            //todo оптимизировать запрос
             HumanBeing humanBeing = humanBeingRepository.findById(idHumanBeing)
                     .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + idHumanBeing));
             Car car = carRepository.findById(idCar)
                     .orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + idCar));
             humanBeing.setCar(car);
+            humanBeingRepository.save(humanBeing);
+
+            HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(humanBeing);
+            notifyFrontend(socketMessage);
         }
     }
 
@@ -175,4 +201,13 @@ public class HumanBeingService {
                 .collect(Collectors.toSet());
     }
 
+
+    /**
+     * Метод уведомляющий front через веб сокет о создании нового HumanBeing или его обновлении
+     */
+    private void notifyFrontend(HumanBeingSocketMessage message) {
+        String jsonMessage = new Gson().toJson(message);
+        messagingTemplate.convertAndSend("/topic/human-being", jsonMessage);
+        log.info("Уведомил фронтенд с сообщением: " + jsonMessage);
+    }
 }

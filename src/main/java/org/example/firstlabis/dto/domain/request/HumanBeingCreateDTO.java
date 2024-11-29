@@ -34,5 +34,4 @@ public record HumanBeingCreateDTO(
         WeaponType weaponType
 ) {
 
-
 }

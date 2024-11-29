@@ -14,7 +14,6 @@ public interface CarMapper extends EntityMapper<CarResponseDTO, Car> {
 
     Car toEntity(CarUpdateDTO request);
 
-    //todo удостовериться правильно ли работает маппинг
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(CarUpdateDTO dto, @MappingTarget Car entity);
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 /**
  * Класс аудита пользователей, для отслеживания их действий над сущностями
  */
-public class AuditorAwareImpl implements AuditorAware<User> {
+public class   AuditorAwareImpl implements AuditorAware<User> {
     @Override
     public Optional<User> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

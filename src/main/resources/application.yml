@@ -6,7 +6,7 @@ spring:
     generate-ddl: ${SPRING_JPA_GENERATE_DDL:true}
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
-    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
     properties:
       eclipselink:
         weaving: static
@@ -32,3 +32,9 @@ logging:
 admin: # логин и пароль главного админа, который изначально есть в системе
   username: admin_main
   password: admin_main
+
+
+thymeleaf:
+  enabled: true
+  prefix: classpath:/templates/
+  suffix: .html
