@@ -5,12 +5,13 @@ spring:
   jpa:
     generate-ddl: ${SPRING_JPA_GENERATE_DDL:true}
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:none}
+      ddl-auto: none
     show-sql: ${SPRING_JPA_SHOW_SQL:false}
     properties:
       eclipselink:
         weaving: static
-        ddl-generation: update
+        ddl-generation: create-or-extend-tables
+
     database-platform: org.eclipse.persistence.platform.database.PostgreSQLPlatform
 
   datasource:

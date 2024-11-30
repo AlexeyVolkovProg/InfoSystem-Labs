@@ -4,11 +4,12 @@ import com.google.gson.Gson;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.firstlabis.controller.socket.enums.OperationType;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
-import org.example.firstlabis.dto.socket.HumanBeingSocketMessage;
+import org.example.firstlabis.dto.socket.HumanBeingOperationMessage;
+import org.example.firstlabis.dto.socket.dto.HumanBeingSocketMessageDTO;
+import org.example.firstlabis.dto.socket.enums.OperationType;
 import org.example.firstlabis.mapper.domain.HumanBeingMapper;
 import org.example.firstlabis.mapper.socket.HumanBeingMessageMapper;
 import org.example.firstlabis.model.domain.Car;
@@ -17,14 +18,13 @@ import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 import org.example.firstlabis.repository.CarRepository;
 import org.example.firstlabis.repository.HumanBeingRepository;
-import org.example.firstlabis.service.security.HumanBeingSecurityService;
+import org.example.firstlabis.service.security.auth.HumanBeingSecurityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,8 +48,7 @@ public class HumanBeingService {
         HumanBeing entity = humanBeingMapper.toEntity(dto);
         entity = humanBeingRepository.save(entity);
 
-        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
-        notifyFrontend(socketMessage);
+        notifyFrontend(entity, OperationType.CREATE_HUMAN);
         return humanBeingMapper.toResponseDto(entity);
     }
 
@@ -59,8 +58,7 @@ public class HumanBeingService {
         humanBeingMapper.updateEntityFromDto(dto, entity);
         entity = humanBeingRepository.save(entity);
 
-        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
-        notifyFrontend(socketMessage);
+        notifyFrontend(entity, OperationType.UPDATE_CAR);
 
         return humanBeingMapper.toResponseDto(entity);
     }
@@ -72,8 +70,7 @@ public class HumanBeingService {
         HumanBeing entity = humanBeingRepository.findById(id).orElseThrow();
         humanBeingRepository.deleteById(id);
 
-        HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(entity);
-        notifyFrontend(socketMessage);
+        notifyFrontend(entity, OperationType.DELETE_HUMAN);
     }
 
     @Transactional
@@ -88,8 +85,7 @@ public class HumanBeingService {
             humanBeing.setCar(car);
             humanBeingRepository.save(humanBeing);
 
-            HumanBeingSocketMessage socketMessage = humanBeingMessageMapper.toSocketMessage(humanBeing);
-            notifyFrontend(socketMessage);
+            notifyFrontend(humanBeing, OperationType.ATTACH_CAR);
         }
     }
 
@@ -205,9 +201,11 @@ public class HumanBeingService {
     /**
      * Метод уведомляющий front через веб сокет о создании нового HumanBeing или его обновлении
      */
-    private void notifyFrontend(HumanBeingSocketMessage message) {
-        String jsonMessage = new Gson().toJson(message);
+    private void notifyFrontend(HumanBeing humanBeing, OperationType operationType) {
+        HumanBeingSocketMessageDTO socketMessage = humanBeingMessageMapper.toSocketMessage(humanBeing);
+        HumanBeingOperationMessage operationMessage = new HumanBeingOperationMessage(operationType, socketMessage);
+        String jsonMessage = new Gson().toJson(operationMessage);
         messagingTemplate.convertAndSend("/topic/human-being", jsonMessage);
-        log.info("Уведомил фронтенд с сообщением: " + jsonMessage);
+        log.info("Уведомление для front: " + jsonMessage);
     }
 }

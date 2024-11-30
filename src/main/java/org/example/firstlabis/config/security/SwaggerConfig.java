@@ -11,19 +11,18 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
-        // Определяем схему безопасности для Bearer токенов
         SecurityScheme securityScheme = new SecurityScheme()
                 .name("Authorization")
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
-        // Добавляем требования безопасности для всех endpoints
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("Authorization");
 
         return new OpenAPI()
                 .info(new Info().title("API Documentation").version("1.0"))
                 .addSecurityItem(securityRequirement)
-                .components(new io.swagger.v3.oas.models.Components().addSecuritySchemes("Authorization", securityScheme));
+                .components(new io.swagger.v3.oas.models.Components()
+                        .addSecuritySchemes("Authorization", securityScheme));
     }
 }

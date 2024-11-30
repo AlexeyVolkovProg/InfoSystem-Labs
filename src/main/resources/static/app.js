@@ -1,5 +1,5 @@
 const stompClient = new StompJs.Client({
-    brokerURL: 'ws://localhost:8080/ws'
+    brokerURL: 'ws://localhost:8080/notify'
 });
 
 stompClient.onConnect = (frame) => {
@@ -42,13 +42,6 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
-    stompClient.publish({
-        destination: "/app/human-being",
-        body: JSON.stringify({'name': $("#name").val()})
-    });
-}
-
 function showGreeting(messageData) {
     const formattedMessage = JSON.stringify(messageData, null, 2);
     $("#greetings").append("<div><pre>" + formattedMessage + "</pre></div>");
@@ -58,5 +51,4 @@ $(function () {
     $("form").on('submit', (e) => e.preventDefault());
     $("#connect").click(() => connect());
     $("#disconnect").click(() => disconnect());
-    $("#send").click(() => sendName());
 });

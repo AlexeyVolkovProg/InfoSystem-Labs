@@ -1,4 +1,4 @@
-package org.example.firstlabis.service.security;
+package org.example.firstlabis.service.security.auth;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

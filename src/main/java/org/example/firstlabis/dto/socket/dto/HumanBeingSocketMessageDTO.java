@@ -1,13 +1,13 @@
-package org.example.firstlabis.dto.socket;
+package org.example.firstlabis.dto.socket.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.example.firstlabis.model.domain.Coordinates;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 
-public record HumanBeingSocketMessage(
-        @JsonProperty(value = "human_id")
-        Long human_id ,
+public record HumanBeingSocketMessageDTO(
+        @JsonProperty(value = "id")
+        Long id,
 
         @JsonProperty(value = "name")
         String name,
@@ -37,7 +37,10 @@ public record HumanBeingSocketMessage(
         WeaponType weaponType,
 
         @JsonProperty("car")
-        CarSocketMessageDTO car
+        CarSocketMessageDTO car,
+
+        @JsonProperty("edit_admin_status")
+        Boolean editAdminStatus
 ) {
 
 }

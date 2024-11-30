@@ -1,4 +1,4 @@
-package org.example.firstlabis.config.socket;
+package org.example.firstlabis.config.mvc;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -9,7 +9,8 @@ public class WebConfigMvc implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/app.js").addResourceLocations("classpath:/static/app.js");
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
     }
 }
 

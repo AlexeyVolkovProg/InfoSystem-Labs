@@ -1,4 +1,4 @@
-package org.example.firstlabis.service.security;
+package org.example.firstlabis.service.security.auth;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +39,6 @@ public abstract class TrackEntitySecurityService<T extends TrackEntity, ID> {
 
         return hasEditRights(currentUser, entity);
     }
-
-    //todo проверить достается ли по-настоящему роль
 
     /**
      * Проверяет есть ли у пользователя права на редактирования данной сущности на основе роли пользователя

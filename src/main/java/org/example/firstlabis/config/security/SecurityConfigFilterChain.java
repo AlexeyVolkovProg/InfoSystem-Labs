@@ -24,7 +24,7 @@ public class SecurityConfigFilterChain {
     private static final String[] WHITE_LIST_URL = {"/api/auth/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/ws/**",
+            "/notify/**",
             "/app/**",
             "/test/**",
             "/app.js"};

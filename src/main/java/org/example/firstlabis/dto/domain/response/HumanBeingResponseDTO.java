@@ -41,7 +41,10 @@ public record HumanBeingResponseDTO(
         Long minutesOfWaiting,
 
         @JsonProperty("weapon_type")
-        WeaponType weaponType
+        WeaponType weaponType,
+
+        @JsonProperty("edit_admin_status")
+        Boolean editAdminStatus
 ) {
 
 }
