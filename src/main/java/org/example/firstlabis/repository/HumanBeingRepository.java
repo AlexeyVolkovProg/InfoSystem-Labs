@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface HumanBeingRepository extends JpaRepository<HumanBeing, Long> {
@@ -33,4 +34,6 @@ public interface HumanBeingRepository extends JpaRepository<HumanBeing, Long> {
 
     @Query("SELECT h FROM HumanBeing h WHERE h.car.id = :carId")
     Optional<HumanBeing> findOwnerByCarId(@Param("carId") Long carId);
+
+    Optional<HumanBeing> findFirstByNameIn(@NonNull Set<String> names);
 }
