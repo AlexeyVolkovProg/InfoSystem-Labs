@@ -5,12 +5,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
+import org.example.firstlabis.dto.history.ImportLogDto;
 import org.example.firstlabis.exceprion.UniqueConstraintException;
 import org.example.firstlabis.mapper.domain.HumanBeingMapper;
 import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.model.history.HumansImportLog;
+import org.example.firstlabis.model.security.User;
 import org.example.firstlabis.repository.HumanBeingRepository;
 import org.example.firstlabis.service.history.HumanImportHistoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +34,7 @@ public class HumanBeingFileService {
     private final HumanImportHistoryService humanImportHistoryService;
 
     public void importFile(MultipartFile file) {
-        importHumans(parseJsonFile(file));
+        importHumansHistory(parseJsonFile(file));
     }
 
     /**
@@ -82,5 +88,21 @@ public class HumanBeingFileService {
         humanBeingRepository.findFirstByNameIn(names).ifPresent((human) -> {
             throw new UniqueConstraintException(HumanBeing.class, "name", human.getName());
         });
+    }
+
+
+    public Page<ImportLogDto> findAllImports(Pageable pageable){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
+
+        Page<ImportLogDto> result;
+        if (isAdmin) {
+            result = humanImportHistoryService.findAll(pageable);
+        } else {
+            User user = (User) authentication.getPrincipal();
+            result = humanImportHistoryService.findAllByUser(user, pageable);
+        }
+        return result;
     }
 }

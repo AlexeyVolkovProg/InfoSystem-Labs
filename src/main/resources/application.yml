@@ -2,6 +2,11 @@ spring:
   application:
     name: firstLabIS
 
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   jpa:
     generate-ddl: ${SPRING_JPA_GENERATE_DDL:true}
     hibernate:

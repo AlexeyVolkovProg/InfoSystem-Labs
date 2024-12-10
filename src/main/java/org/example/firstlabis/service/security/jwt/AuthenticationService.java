@@ -34,7 +34,6 @@ public class AuthenticationService {
     public JwtResponseDTO authenticate(LoginRequestDTO request) {
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username " + request.username()));
-//        validateUserEnabled(user); // проверка, активирован ли пользователь
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
