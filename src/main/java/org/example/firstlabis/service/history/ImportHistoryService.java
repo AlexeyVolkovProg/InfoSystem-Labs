@@ -8,6 +8,7 @@ import org.example.firstlabis.model.security.User;
 import org.example.firstlabis.repository.history.ImportLogRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Supplier;
@@ -19,7 +20,7 @@ public abstract class ImportHistoryService<T extends ImportLog> {
     private final ImportLogMapper importLogMapper;
     private final Supplier<T> importLogConstructor;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public T createStartedVersionImportLog(){
         return importLogRepository.save(importLogConstructor.get());
     }

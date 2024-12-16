@@ -1,6 +1,7 @@
 package org.example.firstlabis.service.domain;
 
 import com.google.gson.Gson;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.firstlabis.dto.domain.request.CarCreateDTO;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -37,23 +39,30 @@ public class CarService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
+    private final EntityManager entityManager;
+
+
+    @Transactional
     public CarResponseDTO create(CarCreateDTO carCreateDTO) {
         Car entity = carMapper.toEntity(carCreateDTO);
         entity = carRepository.save(entity);
+        entityManager.flush();
         return carMapper.toResponseDto(entity);
     }
 
+    @Transactional
     public CarResponseDTO updateCar(Long id, CarUpdateDTO dto) {
         Car entity = carRepository
                 .findById(id).orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
         carMapper.updateEntityFromDto(dto, entity);
         entity = carRepository.save(entity);
-
+        entityManager.flush();
         Optional<HumanBeing> humanBeing = humanBeingRepository.findOwnerByCarId(entity.getId());
         humanBeing.ifPresent(being -> notifyFrontend(being, OperationType.UPDATE_CAR));
         return carMapper.toResponseDto(entity);
     }
 
+    @Transactional
     public void deleteCar(Long id) {
         if (!carRepository.existsById(id)) {
             throw new RuntimeException("Car not found with id: " + id);

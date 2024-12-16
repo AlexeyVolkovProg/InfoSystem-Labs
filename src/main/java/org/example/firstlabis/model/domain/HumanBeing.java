@@ -72,4 +72,6 @@ public class HumanBeing extends TrackEntity {
         this.creationDate = LocalDateTime.now();
     }
 
+    @Version
+    private Integer version;
 }

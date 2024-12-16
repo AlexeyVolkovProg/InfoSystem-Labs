@@ -12,12 +12,13 @@ import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.model.history.HumansImportLog;
 import org.example.firstlabis.model.security.User;
 import org.example.firstlabis.repository.HumanBeingRepository;
-import org.example.firstlabis.service.history.HumanImportHistoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class HumanBeingFileService {
     private final HumanBeingRepository humanBeingRepository;
     private final HumanImportHistoryService humanImportHistoryService;
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importFile(MultipartFile file) {
         importHumansHistory(parseJsonFile(file));
     }

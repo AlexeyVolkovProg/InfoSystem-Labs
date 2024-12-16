@@ -1,9 +1,11 @@
 package org.example.firstlabis.service.domain;
 
 import com.google.gson.Gson;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.persistence.exceptions.OptimisticLockException;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.domain.request.HumanBeingUpdateDTO;
 import org.example.firstlabis.dto.domain.response.HumanBeingResponseDTO;
@@ -19,10 +21,15 @@ import org.example.firstlabis.model.domain.enums.WeaponType;
 import org.example.firstlabis.repository.CarRepository;
 import org.example.firstlabis.repository.HumanBeingRepository;
 import org.example.firstlabis.service.security.auth.HumanBeingSecurityService;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.orm.jpa.JpaOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
@@ -38,38 +45,51 @@ public class HumanBeingService {
     private final HumanBeingMessageMapper humanBeingMessageMapper;
     private final HumanBeingSecurityService humanBeingSecurityService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final EntityManager entityManager;
 
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public HumanBeingResponseDTO createHumanBeing(HumanBeingCreateDTO dto) {
         if (humanBeingRepository.findByName(dto.name()).isPresent()) {
             throw new EntityNotFoundException("HumanBeing already exists with name " + dto.name());
         }
-        log.info("я тут");
         HumanBeing entity = humanBeingMapper.toEntity(dto);
         entity = humanBeingRepository.save(entity);
-
+        entityManager.flush();
         notifyFrontend(entity, OperationType.CREATE_HUMAN);
         return humanBeingMapper.toResponseDto(entity);
     }
 
+    @Transactional
+    @Retryable(value = {JpaOptimisticLockingFailureException.class,
+            DataAccessException.class,
+            OptimisticLockException.class},
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 500),
+            listeners = "loggingRetryListener"
+    )
     public HumanBeingResponseDTO updateHumanBeing(Long id, HumanBeingUpdateDTO dto) {
+        log.info("Попытка обновления HumanBeing с id: {} в потоке: {}"
+                , id, Thread.currentThread().getName());
         HumanBeing entity = humanBeingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
+
         humanBeingMapper.updateEntityFromDto(dto, entity);
         entity = humanBeingRepository.save(entity);
-
         notifyFrontend(entity, OperationType.UPDATE_CAR);
-
+        log.info("Успешно обновлен HumanBeing с id: {} в потоке: {}",
+                id, Thread.currentThread().getName());
         return humanBeingMapper.toResponseDto(entity);
     }
 
+    @Transactional
     public void deleteHumanBeing(Long id) {
         if (!humanBeingRepository.existsById(id)) {
             throw new EntityNotFoundException("HumanBeing not found with id: " + id);
         }
         HumanBeing entity = humanBeingRepository.findById(id).orElseThrow();
         humanBeingRepository.deleteById(id);
-
+        entityManager.flush();
         notifyFrontend(entity, OperationType.DELETE_HUMAN);
     }
 
@@ -84,11 +104,12 @@ public class HumanBeingService {
                     .orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + idCar));
             humanBeing.setCar(car);
             humanBeingRepository.save(humanBeing);
-
+            entityManager.flush();
             notifyFrontend(humanBeing, OperationType.ATTACH_CAR);
         }
     }
 
+    @Transactional
     public HumanBeingResponseDTO findHumanBeingById(Long id) {
         HumanBeing entity = humanBeingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("HumanBeing not found with id: " + id));
@@ -98,6 +119,7 @@ public class HumanBeingService {
     /**
      * Метод ищет все объекты HumanBeing, применяя пагинацию с фильтрами по строковым полям
      */
+    @Transactional
     public Page<HumanBeingResponseDTO> getAllWithFilters(String name, String soundtrackName, Pageable pageable) {
         if (name != null && soundtrackName != null) {
             return humanBeingRepository.findAllByNameAndSoundtrackName(name, soundtrackName, pageable).
@@ -111,6 +133,7 @@ public class HumanBeingService {
     /**
      * Метод ищет все объекты HumanBeing, в имени которых есть указанная подстрока
      */
+    @Transactional
     public Page<HumanBeingResponseDTO> getAllByNameContaining(String substring, Pageable pageable) {
         return humanBeingRepository.findAllByNameContaining(substring, pageable).map(humanBeingMapper::toResponseDto);
     }
