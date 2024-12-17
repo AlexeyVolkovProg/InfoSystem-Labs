@@ -28,7 +28,7 @@ public class YandexCloudStorageService {
 
     private final HumanImportLogRepository humanImportLogRepository;
 
-    private final S3Client s3Client;
+    private final S3Client yandexStorageClient;
 
     public void save(String filename, MultipartFile file) {
         try {
@@ -36,7 +36,7 @@ public class YandexCloudStorageService {
                     .bucket(bucketName)
                     .key(filename)
                     .build();
-            s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
+            yandexStorageClient.putObject(request, RequestBody.fromBytes(file.getBytes()));
         } catch (IOException e) {
             throw new RuntimeException("Exception reading file input file", e);
         }
@@ -44,7 +44,7 @@ public class YandexCloudStorageService {
 
     public ByteArrayResource get(String filename) {
         try {
-            ResponseInputStream<GetObjectResponse> response = s3Client.getObject(
+            ResponseInputStream<GetObjectResponse> response = yandexStorageClient.getObject(
                     request -> request.bucket(bucketName).key(filename));
             return new ByteArrayResource(response.readAllBytes());
         } catch (IOException e) {

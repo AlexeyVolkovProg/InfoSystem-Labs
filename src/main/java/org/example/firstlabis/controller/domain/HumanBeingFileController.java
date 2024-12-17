@@ -4,6 +4,7 @@ package org.example.firstlabis.controller.domain;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.firstlabis.dto.history.ImportLogDto;
 import org.example.firstlabis.service.history.HumanBeingFileService;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/file/")
+@Slf4j
 @RequiredArgsConstructor
 public class HumanBeingFileController {
 
@@ -41,10 +43,11 @@ public class HumanBeingFileController {
     public ResponseEntity<ByteArrayResource> uploadFile(@PathVariable Long id){
         ByteArrayResource file = humanBeingFileService.getImportFileByImportId(id);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDisposition(ContentDisposition.builder("attachment")
                 .filename("humans-import-" + id + ".json")
                 .build());
+        log.info("Returning file with size: {} bytes", file.contentLength());
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(file);

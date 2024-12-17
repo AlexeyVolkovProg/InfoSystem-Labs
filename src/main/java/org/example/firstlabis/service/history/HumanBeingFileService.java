@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
 import org.example.firstlabis.dto.history.ImportLogDto;
 import org.example.firstlabis.exceprion.UniqueConstraintException;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class HumanBeingFileService {
 
@@ -66,10 +68,19 @@ public class HumanBeingFileService {
      */
     private void importHumansHistory(List<HumanBeingCreateDTO> humans, MultipartFile file) {
         HumansImportLog importLog = humanImportHistoryService.createStartedVersionImportLog();
-        importHumans(humans);
         importLog.setSuccess(true);
         importLog.setObjectAdded(humans.size());
+        try {
+            log.info("УСЫПЛЯЕМ ПОТОК");
+            Thread.sleep(25000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        log.info("МЫ НАЧАЛИ ИМПОРТ В В КЛАУД");
         yandexCloudStorageService.saveImportFile(file, importLog); // todo не забудь придумать придумать откат , в случае падения бд
+        log.info("ЩА В БД ЕЩЕ ЗАГРУЗИМ(спойлер: оффнули ее  )");
+        importHumans(humans);
+        log.info("МЫ СПРАВИЛИСЬ");
         humanImportHistoryService.saveFinishedVersionImportLog(importLog);
     }
 
