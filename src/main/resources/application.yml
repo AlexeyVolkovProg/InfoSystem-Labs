@@ -24,7 +24,19 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
 
+  cloud:
+    aws:
+      credentials:
+        access-key: ${YANDEX_CLOUD_ACCESS_KEY}
+        secret-key: ${YANDEX_CLOUD_SECRET_KEY}
+      region:
+        static: ru-central1
+      endpoint: https://storage.yandexcloud.net
+
 application:
+  yandex:
+    bucket:
+      name: is-bucket
   security:
     jwt:
       secret-key: ${APPLICATION_SECURITY_JWT_SECRET_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}

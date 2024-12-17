@@ -48,7 +48,7 @@ public class HumanBeingService {
     private final EntityManager entityManager;
 
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public HumanBeingResponseDTO createHumanBeing(HumanBeingCreateDTO dto) {
         if (humanBeingRepository.findByName(dto.name()).isPresent()) {
             throw new EntityNotFoundException("HumanBeing already exists with name " + dto.name());

@@ -6,12 +6,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.example.firstlabis.dto.history.ImportLogDto;
 import org.example.firstlabis.service.history.HumanBeingFileService;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,5 +35,18 @@ public class HumanBeingFileController {
     public ResponseEntity<Page<ImportLogDto>> findAllImports(
             @PageableDefault @Parameter(description = "Pagination parameters") Pageable pageable) {
         return ResponseEntity.ok(humanBeingFileService.findAllImports(pageable));
+    }
+
+    @GetMapping(value="/import/upload/{id}")
+    public ResponseEntity<ByteArrayResource> uploadFile(@PathVariable Long id){
+        ByteArrayResource file = humanBeingFileService.getImportFileByImportId(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename("humans-import-" + id + ".json")
+                .build());
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(file);
     }
 }

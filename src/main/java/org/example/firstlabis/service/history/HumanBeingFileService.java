@@ -12,6 +12,8 @@ import org.example.firstlabis.model.domain.HumanBeing;
 import org.example.firstlabis.model.history.HumansImportLog;
 import org.example.firstlabis.model.security.User;
 import org.example.firstlabis.repository.HumanBeingRepository;
+import org.example.firstlabis.service.storage.YandexCloudStorageService;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -33,10 +35,16 @@ public class HumanBeingFileService {
     private final HumanBeingMapper humanBeingMapper;
     private final HumanBeingRepository humanBeingRepository;
     private final HumanImportHistoryService humanImportHistoryService;
+    private final YandexCloudStorageService yandexCloudStorageService;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importFile(MultipartFile file) {
-        importHumansHistory(parseJsonFile(file));
+        importHumansHistory(parseJsonFile(file), file);
+    }
+
+    @Transactional
+    public ByteArrayResource getImportFileByImportId(Long importId) {
+        return yandexCloudStorageService.getFileByImportId(importId);
     }
 
     /**
@@ -56,11 +64,12 @@ public class HumanBeingFileService {
     /**
      * Создаем запись в бд , с статистикой import, импортирую все объекты
      */
-    private void importHumansHistory(List<HumanBeingCreateDTO> humans) {
+    private void importHumansHistory(List<HumanBeingCreateDTO> humans, MultipartFile file) {
         HumansImportLog importLog = humanImportHistoryService.createStartedVersionImportLog();
         importHumans(humans);
         importLog.setSuccess(true);
         importLog.setObjectAdded(humans.size());
+        yandexCloudStorageService.saveImportFile(file, importLog); // todo не забудь придумать придумать откат , в случае падения бд
         humanImportHistoryService.saveFinishedVersionImportLog(importLog);
     }
 
