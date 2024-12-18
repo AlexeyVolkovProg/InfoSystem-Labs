@@ -54,6 +54,7 @@ public class YandexCloudStorageService {
 
     /**
      * Метод сохранения файла в Object Yandex Storage
+     *
      * @param file
      * @param importLog
      */
@@ -65,6 +66,7 @@ public class YandexCloudStorageService {
 
     /**
      * Достаем файл из Object Yandex Storage
+     *
      * @param importId
      * @return
      */
@@ -78,7 +80,12 @@ public class YandexCloudStorageService {
         return this.get(filename);
     }
 
-    private String filenameByImportId(Long importId) {
+    public String filenameByImportId(Long importId) {
         return String.format("%s/%d", DIRECTORY_NAME, importId);
     }
+
+    public void deleteFile(String filename) {
+        yandexStorageClient.deleteObject(request -> request.bucket(bucketName).key(filename));
+    }
+
 }

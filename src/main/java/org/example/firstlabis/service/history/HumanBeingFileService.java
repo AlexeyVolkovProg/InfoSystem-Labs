@@ -3,6 +3,7 @@ package org.example.firstlabis.service.history;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.firstlabis.dto.domain.request.HumanBeingCreateDTO;
@@ -68,20 +69,21 @@ public class HumanBeingFileService {
      */
     private void importHumansHistory(List<HumanBeingCreateDTO> humans, MultipartFile file) {
         HumansImportLog importLog = humanImportHistoryService.createStartedVersionImportLog();
-        importLog.setSuccess(true);
-        importLog.setObjectAdded(humans.size());
-        try {
-            log.info("УСЫПЛЯЕМ ПОТОК");
-            Thread.sleep(25000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        try{
+            importLog.setSuccess(true);
+            importLog.setObjectAdded(humans.size());
+            log.info("МЫ НАЧАЛИ ИМПОРТ В В КЛАУД");
+            yandexCloudStorageService.saveImportFile(file, importLog);
+            log.info("МЫ НАЧАЛИ ЗАГРУЗКУ В БД");
+            importHumans(humans);
+            log.info("МЫ СПРАВИЛИСЬ");
+            humanImportHistoryService.saveFinishedVersionImportLog(importLog);
+        }catch (Exception ex){
+            String filename = yandexCloudStorageService.filenameByImportId(importLog.getId());
+            yandexCloudStorageService.deleteFile(filename);
+            throw ex;
         }
-        log.info("МЫ НАЧАЛИ ИМПОРТ В В КЛАУД");
-        yandexCloudStorageService.saveImportFile(file, importLog); // todo не забудь придумать придумать откат , в случае падения бд
-        log.info("ЩА В БД ЕЩЕ ЗАГРУЗИМ(спойлер: оффнули ее  )");
-        importHumans(humans);
-        log.info("МЫ СПРАВИЛИСЬ");
-        humanImportHistoryService.saveFinishedVersionImportLog(importLog);
+
     }
 
     /**

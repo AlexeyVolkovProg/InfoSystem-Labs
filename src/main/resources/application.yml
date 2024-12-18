@@ -4,11 +4,14 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+      max-file-size: 2GB
+      max-request-size: 2GB
 
   jpa:
     generate-ddl: ${SPRING_JPA_GENERATE_DDL:true}
+    jdbc:
+      batch-writing: jdbc # Включить пакетную запись
+      batch-writing.size: 50 # Размер батча (количество записей на операцию)
     hibernate:
       ddl-auto: none
     show-sql: ${SPRING_JPA_SHOW_SQL:false}
@@ -16,6 +19,8 @@ spring:
       eclipselink:
         weaving: static
         ddl-generation: create-or-extend-tables
+
+
 
     database-platform: org.eclipse.persistence.platform.database.PostgreSQLPlatform
 
@@ -46,6 +51,8 @@ application:
 logging:
   level:
     org.zalando.logbook: TRACE
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
 
 admin: # логин и пароль главного админа, который изначально есть в системе
   username: admin_main
