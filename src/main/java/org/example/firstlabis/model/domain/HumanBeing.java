@@ -3,10 +3,7 @@ package org.example.firstlabis.model.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.firstlabis.model.audit.TrackEntity;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
@@ -14,6 +11,7 @@ import org.example.firstlabis.model.domain.enums.WeaponType;
 import java.time.LocalDateTime;
 
 @Entity
+@Builder
 @Getter
 @Setter
 @Table(name = "humans")

@@ -1,50 +1,54 @@
 package org.example.firstlabis.dto.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 
 import java.time.LocalDateTime;
 
-public record HumanBeingResponseDTO(
+@NoArgsConstructor
+@Setter
+@Getter
+public class HumanBeingResponseDTO{
         @JsonProperty("id")
-        Long id,
+        Long id;
 
         @JsonProperty("name")
-        String name,
+        String name;
 
         @JsonProperty("coordinates")
-        CoordinatesResponseDTO coordinates,
+        CoordinatesResponseDTO coordinates;
 
         @JsonProperty("creation_date")
-        LocalDateTime creationDate,
+        LocalDateTime creationDate;
 
         @JsonProperty("real_hero")
-        boolean realHero,
+        boolean realHero;
 
         @JsonProperty("has_toothpick")
-        Boolean hasToothpick,
+        Boolean hasToothpick;
 
         @JsonProperty("car")
-        CarResponseDTO car,
+        CarResponseDTO car;
 
         @JsonProperty("mood")
-        Mood mood,
+        Mood mood;
 
         @JsonProperty("impact_speed")
-        int impactSpeed,
+        int impactSpeed;
 
         @JsonProperty("soundtrack_name")
-        String soundtrackName,
+        String soundtrackName;
 
         @JsonProperty("minutes_of_waiting")
-        Long minutesOfWaiting,
+        Long minutesOfWaiting;
 
         @JsonProperty("weapon_type")
-        WeaponType weaponType,
+        WeaponType weaponType;
 
         @JsonProperty("edit_admin_status")
-        Boolean editAdminStatus
-) {
-
+        Boolean editAdminStatus;
 }

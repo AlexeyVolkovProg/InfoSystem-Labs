@@ -1,37 +1,41 @@
 package org.example.firstlabis.dto.domain.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.firstlabis.model.domain.Coordinates;
 import org.example.firstlabis.model.domain.enums.Mood;
 import org.example.firstlabis.model.domain.enums.WeaponType;
 
-public record HumanBeingUpdateDTO(
+@NoArgsConstructor
+@Setter
+@Getter
+public class HumanBeingUpdateDTO{
         @JsonProperty(value = "name", required = true)
-        String name,
+        String name;
 
         @JsonProperty(value = "coordinates")
-        Coordinates coordinates,
+        Coordinates coordinates;
 
         @JsonProperty("real_hero")
-        Boolean realHero,
+        Boolean realHero;
 
         @JsonProperty("has_toothpick")
-        Boolean hasToothpick,
+        Boolean hasToothpick;
 
         @JsonProperty("mood")
-        Mood mood,
+        Mood mood;
 
         @JsonProperty("impact_speed")
-        Integer impactSpeed,
+        Integer impactSpeed;
 
         @JsonProperty("soundtrack_name")
-        String soundtrackName,
+        String soundtrackName;
 
         @JsonProperty("minutes_of_waiting")
-        Long minutesOfWaiting,
+        Long minutesOfWaiting;
 
         @JsonProperty("weapon_type")
-        WeaponType weaponType
-) {
-
+        WeaponType weaponType;
 }
