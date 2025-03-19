@@ -1,7 +1,7 @@
 # Информационные системы
 
 # Технологии
-Spring: Boot, Web, Data JPA(Eclipse Link), Security + JWT, S3(Yandex Cloud);
+Spring Boot, Web Socket, Spring Data JPA(Eclipse Link), Security + JWT, S3(Yandex Cloud);
 PostgreSQL, Docker, Swagger, Maven
 
 ## Лабораторначя работа №3
